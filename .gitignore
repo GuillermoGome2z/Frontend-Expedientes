@@ -56,3 +56,5 @@ verify-screenshots.ps1
 verify-integration.ps1
 docker-check.ps1
 docker-check.sh
+
+CLEANUP_GUIDE.md
