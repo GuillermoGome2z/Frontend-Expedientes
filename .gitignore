@@ -34,3 +34,25 @@ dist-ssr
 docker-compose.override.yml
 logs/
 *.log
+
+# Archivos personales y de desarrollo (NO SUBIR)
+VIDEO_GUIDE_FRONTEND.md
+DOCKER_STATUS.md
+DOCKER_SETUP_COMPLETE.md
+BACKEND_CHECKLIST.md
+BACKEND_DOCKER_TODO.md
+BACKEND_IMPLEMENTATION.md
+REFACTOR_SUMMARY.md
+INTEGRATION_SUMMARY.md
+QUICKSTART_INTEGRATION.md
+FRONTEND_INTEGRATION_GUIDE.md
+MIGRATION_GUIDE.md
+README.old.md
+README.backup.md
+SCREENSHOTS_GUIDE.md
+
+# Scripts personales
+verify-screenshots.ps1
+verify-integration.ps1
+docker-check.ps1
+docker-check.sh
