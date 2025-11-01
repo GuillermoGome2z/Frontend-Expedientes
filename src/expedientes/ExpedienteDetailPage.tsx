@@ -25,7 +25,11 @@ export function ExpedienteDetailPage() {
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["expediente", id],
-    queryFn: () => expedientesApi.getById(Number(id)),
+    queryFn: async () => {
+      const result = await expedientesApi.getById(Number(id));
+      console.log("Expediente recibido:", result);
+      return result;
+    },
     enabled: !!id,
   });
 
@@ -50,7 +54,7 @@ export function ExpedienteDetailPage() {
     onError: (error: any) => {
       toast({
         title: "Error al actualizar estado",
-        description: error.response?.data?.message || "No se pudo actualizar el estado.",
+        description: error.message || "No se pudo actualizar el estado.",
         variant: "destructive",
       });
     },
@@ -70,9 +74,18 @@ export function ExpedienteDetailPage() {
     }
   };
 
-  const expediente = data?.data;
-  const canEdit = user?.rol === "tecnico" && expediente?.tecnicoId === user.id;
-  const canChangeStatus = user?.rol === "coordinador" && expediente?.estado === "Abierto";
+  // El backend puede devolver { data: expediente } o directamente el expediente
+  const expediente = (data as any)?.data || data;
+  
+  // Permisos:
+  // - Coordinadores: pueden editar y aprobar/rechazar expedientes abiertos
+  // - Técnicos: solo pueden editar sus propios expedientes mientras estén abiertos
+  const isCoordinador = user?.rol === "coordinador";
+  const isTecnicoAsignado = user?.rol === "tecnico" && expediente?.tecnicoId === user.id;
+  const isExpedienteAbierto = expediente?.estado?.toLowerCase() === "abierto";
+  
+  const canEdit = (isCoordinador || isTecnicoAsignado) && isExpedienteAbierto;
+  const canChangeStatus = isCoordinador && isExpedienteAbierto;
 
   if (error) {
     return (
@@ -141,7 +154,14 @@ export function ExpedienteDetailPage() {
             </div>
             <div>
               <Label className="text-muted-foreground">Fecha de Creación</Label>
-              <p className="mt-2">{new Date(expediente.createdAt).toLocaleString()}</p>
+              <p className="mt-2">
+                {(() => {
+                  const date = new Date(expediente.createdAt);
+                  return isNaN(date.getTime()) 
+                    ? "Fecha no disponible" 
+                    : date.toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" });
+                })()}
+              </p>
             </div>
           </div>
 

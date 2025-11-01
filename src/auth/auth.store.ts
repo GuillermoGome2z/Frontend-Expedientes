@@ -1,13 +1,17 @@
 import { create } from "zustand";
-import type { AuthState, User } from "./auth.types";
+import type { AuthState, User, Rol } from "./auth.types";
 
 const AUTH_STORAGE_KEY = "expedientes_auth";
 
+/**
+ * Store de autenticación con Zustand
+ * Maneja el estado de autenticación y persistencia en localStorage
+ */
 interface AuthStore extends AuthState {
   login: (token: string, user: User) => void;
   logout: () => void;
   isAuthenticated: () => boolean;
-  hasRole: (role: string) => boolean;
+  hasRole: (...roles: Rol[]) => boolean;
 }
 
 // Load from localStorage
@@ -15,7 +19,11 @@ const loadAuthState = (): AuthState => {
   try {
     const stored = localStorage.getItem(AUTH_STORAGE_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Validar que tenga la estructura correcta
+      if (parsed && typeof parsed === "object" && "token" in parsed && "user" in parsed) {
+        return parsed;
+      }
     }
   } catch (error) {
     console.error("Error loading auth state:", error);
@@ -43,18 +51,24 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   logout: () => {
     const newState = { token: null, user: null };
-    saveAuthState(newState);
+    // Limpiar localStorage
     localStorage.removeItem(AUTH_STORAGE_KEY);
     set(newState);
+    
+    // Navegar a login (si estamos en el browser)
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
   },
 
   isAuthenticated: () => {
-    const { token } = get();
-    return token !== null && token !== "";
+    const { token, user } = get();
+    return token !== null && token !== "" && user !== null;
   },
 
-  hasRole: (role: string) => {
+  hasRole: (...roles: Rol[]) => {
     const { user } = get();
-    return user?.rol === role;
+    if (!user) return false;
+    return roles.includes(user.rol);
   },
 }));

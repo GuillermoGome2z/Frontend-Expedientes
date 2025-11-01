@@ -1,3 +1,6 @@
+/**
+ * Indicio asociado a un expediente
+ */
 export interface Indicio {
   id: number;
   descripcion: string;
@@ -10,13 +13,19 @@ export interface Indicio {
   updatedAt: string;
 }
 
+/**
+ * Respuesta del listado de indicios con paginación
+ */
 export interface IndicioListResponse {
-  pagina: number;
+  page: number;
   pageSize: number;
   total: number;
   data: Indicio[];
 }
 
+/**
+ * DTO para crear un indicio
+ */
 export interface CreateIndicioDTO {
   descripcion: string;
   peso?: number;
@@ -24,10 +33,15 @@ export interface CreateIndicioDTO {
   tamano?: string;
 }
 
+/**
+ * DTO para actualizar un indicio
+ */
 export interface UpdateIndicioDTO extends Partial<CreateIndicioDTO> {}
 
+/**
+ * Filtros para el listado de indicios
+ */
 export interface IndicioFilters {
-  pagina?: number;
   page?: number;
   pageSize?: number;
 }

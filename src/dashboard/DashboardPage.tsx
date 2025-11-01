@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FileText, CheckCircle, XCircle, Clock, Plus, Download } from "lucide-react";
 import { useAuthStore } from "@/auth/auth.store";
 import { expedientesApi } from "@/expedientes/expedientes.api";
+import { HealthChip } from "@/components/HealthChip";
 import { Page } from "@/shared/ui/Page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,7 @@ export function DashboardPage() {
     <Page
       title={`Hola, ${user?.username} 👋`}
       description="Bienvenido al Sistema de Gestión de Expedientes"
+      toolbar={<HealthChip />}
     >
       {/* Estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

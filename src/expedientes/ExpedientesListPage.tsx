@@ -18,27 +18,38 @@ export function ExpedientesListPage() {
   const { user } = useAuthStore();
   const { toast } = useToast();
   const [filters, setFilters] = useState<ExpedienteFilters>({
-    pagina: 1,
+    page: 1,
     pageSize: 10,
     q: "",
-    estado: "",
   });
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["expedientes", filters],
-    queryFn: () => expedientesApi.list(filters),
+    queryFn: async () => {
+      const result = await expedientesApi.list(filters);
+      console.log("📋 Lista de expedientes recibida:", result);
+      if (result?.data?.length > 0) {
+        console.log("🔍 Ejemplo de expediente:", result.data[0]);
+      }
+      return result;
+    },
+    placeholderData: (previousData) => previousData, // Para transiciones suaves de paginación (React Query v5)
   });
 
   const handleSearch = (q: string) => {
-    setFilters((prev) => ({ ...prev, q, pagina: 1 }));
+    setFilters((prev) => ({ ...prev, q, page: 1 }));
   };
 
   const handleEstadoFilter = (estado: string) => {
-    setFilters((prev) => ({ ...prev, estado, pagina: 1 }));
+    setFilters((prev) => ({ 
+      ...prev, 
+      estado: estado ? (estado as any) : undefined, 
+      page: 1 
+    }));
   };
 
   const handlePageChange = (page: number) => {
-    setFilters((prev) => ({ ...prev, pagina: page }));
+    setFilters((prev) => ({ ...prev, page }));
   };
 
   const handleExport = async () => {
@@ -108,12 +119,16 @@ export function ExpedientesListPage() {
     {
       key: "tecnico",
       label: "Técnico",
-      render: (exp: any) => exp.tecnico?.username || "-",
+      render: (exp: any) => exp.tecnico?.username || exp.tecnico?.name || "-",
     },
     {
       key: "createdAt",
       label: "Fecha de Creación",
-      render: (exp: any) => new Date(exp.createdAt).toLocaleDateString(),
+      render: (exp: any) => {
+        if (!exp.createdAt) return "-";
+        const date = new Date(exp.createdAt);
+        return isNaN(date.getTime()) ? "-" : date.toLocaleDateString();
+      },
     },
     {
       key: "actions",
@@ -188,7 +203,7 @@ export function ExpedientesListPage() {
         </div>
         <div className="flex gap-2">
           <Button
-            variant={filters.estado === "" ? "default" : "outline"}
+            variant={!filters.estado ? "default" : "outline"}
             onClick={() => handleEstadoFilter("")}
             size="sm"
           >
@@ -241,7 +256,7 @@ export function ExpedientesListPage() {
           pagination={
             data
               ? {
-                  currentPage: data.pagina,
+                  currentPage: data.page,
                   pageSize: data.pageSize,
                   total: data.total,
                   onPageChange: handlePageChange,

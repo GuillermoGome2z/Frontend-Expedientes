@@ -24,11 +24,12 @@ export function IndiciosList({ expedienteId, canEdit }: IndiciosListProps) {
 
   const { data, isLoading } = useQuery({
     queryKey: ["indicios", expedienteId, page],
-    queryFn: () => indiciosApi.list(expedienteId, { pagina: page, pageSize: 10 }),
+    queryFn: () => indiciosApi.list(expedienteId, { page, pageSize: 10 }),
   });
 
   const toggleActivoMutation = useMutation({
-    mutationFn: indiciosApi.toggleActivo,
+    mutationFn: ({ id, activo }: { id: number; activo: boolean }) =>
+      indiciosApi.toggleActivo(id, activo),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["indicios", expedienteId] });
       toast({
@@ -39,7 +40,7 @@ export function IndiciosList({ expedienteId, canEdit }: IndiciosListProps) {
     onError: (error: any) => {
       toast({
         title: "Error al actualizar indicio",
-        description: error.response?.data?.message || "Inténtalo de nuevo.",
+        description: error.message || "Inténtalo de nuevo.",
         variant: "destructive",
       });
     },
@@ -97,8 +98,9 @@ export function IndiciosList({ expedienteId, canEdit }: IndiciosListProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => toggleActivoMutation.mutate(indicio.id)}
+                  onClick={() => toggleActivoMutation.mutate({ id: indicio.id, activo: !indicio.activo })}
                   disabled={toggleActivoMutation.isPending}
+                  title={indicio.activo ? "Desactivar indicio" : "Activar indicio"}
                 >
                   {indicio.activo ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
                 </Button>
@@ -152,7 +154,7 @@ export function IndiciosList({ expedienteId, canEdit }: IndiciosListProps) {
             pagination={
               data
                 ? {
-                    currentPage: data.pagina,
+                    currentPage: data.page,
                     pageSize: data.pageSize,
                     total: data.total,
                     onPageChange: setPage,
