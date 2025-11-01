@@ -51,4 +51,26 @@ export const expedientesApi = {
     window.URL.revokeObjectURL(downloadUrl);
     document.body.removeChild(a);
   },
+
+  exportSingle: async (expedienteId: number) => {
+    const url = `${import.meta.env.VITE_API_URL}/expedientes/${expedienteId}/export`;
+    
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("expedientes_auth") ? JSON.parse(localStorage.getItem("expedientes_auth")!).token : ""}`,
+      },
+    });
+    
+    if (!response.ok) throw new Error("Error al exportar expediente");
+    
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = `expediente_${expedienteId}_${new Date().toISOString().split("T")[0]}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(downloadUrl);
+    document.body.removeChild(a);
+  },
 };

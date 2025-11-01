@@ -62,6 +62,27 @@ export function ExpedientesListPage() {
     }
   };
 
+  const handleExportSingle = async (expedienteId: number, codigo: string) => {
+    try {
+      toast({
+        title: "📄 Exportando...",
+        description: `Generando archivo para ${codigo}...`,
+      });
+      await expedientesApi.exportSingle(expedienteId);
+      toast({
+        title: "✅ Archivo listo",
+        description: `Expediente ${codigo} descargado correctamente.`,
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error al exportar",
+        description: "No se pudo generar el archivo. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const columns = [
     {
       key: "codigo",
@@ -113,6 +134,14 @@ export function ExpedientesListPage() {
                 </Button>
               </Link>
             )}
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => handleExportSingle(exp.id, exp.codigo)}
+              title="Exportar este expediente"
+            >
+              <Download size={14} />
+            </Button>
           </div>
         );
       },
