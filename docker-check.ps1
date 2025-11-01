@@ -1,32 +1,38 @@
-# Script de verificación pre-Docker para Windows
+# Script de verificacion pre-Docker para Windows
 # Verifica que todos los archivos necesarios existen antes de levantar los contenedores
 
 Write-Host ""
-Write-Host "🔍 Verificando archivos necesarios para Docker..." -ForegroundColor Cyan
+Write-Host "Verificando archivos necesarios para Docker..." -ForegroundColor Cyan
 Write-Host ""
 
-$errors = 0
-$warnings = 0
+$script:errors = 0
+$script:warnings = 0
 
-# Función para verificar archivo
+# Funcion para verificar archivo
 function Check-File {
-    param($path)
-    if (Test-Path $path) {
-        Write-Host "✓ $path" -ForegroundColor Green
-    } else {
-        Write-Host "✗ $path (FALTA)" -ForegroundColor Red
+    param([string]$path)
+    if (Test-Path $path -PathType Leaf) {
+        Write-Host "[OK] $path" -ForegroundColor Green
+        return $true
+    }
+    else {
+        Write-Host "[FALTA] $path" -ForegroundColor Red
         $script:errors++
+        return $false
     }
 }
 
-# Función para verificar directorio
+# Funcion para verificar directorio
 function Check-Dir {
-    param($path)
-    if (Test-Path $path) {
-        Write-Host "✓ $path/" -ForegroundColor Green
-    } else {
-        Write-Host "⚠ $path/ (FALTA)" -ForegroundColor Yellow
+    param([string]$path)
+    if (Test-Path $path -PathType Container) {
+        Write-Host "[OK] $path/" -ForegroundColor Green
+        return $true
+    }
+    else {
+        Write-Host "[WARN] $path/" -ForegroundColor Yellow
         $script:warnings++
+        return $false
     }
 }
 
@@ -50,21 +56,26 @@ Check-File ".dockerignore"
 Check-Dir ".devcontainer"
 
 Write-Host ""
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+Write-Host "================================================" -ForegroundColor Cyan
 
-if ($errors -eq 0) {
-    Write-Host "✓ Todos los archivos críticos están presentes" -ForegroundColor Green
+if ($script:errors -eq 0) {
+    Write-Host ""
+    Write-Host "[SUCCESS] Todos los archivos criticos estan presentes" -ForegroundColor Green
     Write-Host ""
     Write-Host "Para levantar los contenedores, ejecuta:" -ForegroundColor Cyan
     Write-Host "  npm run docker:up" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "O directamente:" -ForegroundColor Cyan
     Write-Host "  docker compose up --build" -ForegroundColor Yellow
+    Write-Host ""
     exit 0
-} else {
-    Write-Host "✗ Faltan $errors archivo(s) crítico(s)" -ForegroundColor Red
-    if ($warnings -gt 0) {
-        Write-Host "⚠ Hay $warnings advertencia(s)" -ForegroundColor Yellow
+}
+else {
+    Write-Host ""
+    Write-Host "[ERROR] Faltan $($script:errors) archivo(s) critico(s)" -ForegroundColor Red
+    if ($script:warnings -gt 0) {
+        Write-Host "[WARN] Hay $($script:warnings) advertencia(s)" -ForegroundColor Yellow
     }
+    Write-Host ""
     exit 1
 }
