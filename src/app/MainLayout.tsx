@@ -2,6 +2,7 @@ import { Outlet, Link } from "react-router-dom";
 import { FileText, LayoutDashboard, Users } from "lucide-react";
 import { useAuthStore } from "@/auth/auth.store";
 import { LogoutButton } from "@/auth/LogoutButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
 export function MainLayout() {
@@ -46,6 +47,7 @@ export function MainLayout() {
             <span className="text-sm text-muted-foreground hidden sm:inline">
               Hola, <span className="font-medium text-foreground">{user?.username}</span> 👋
             </span>
+            <ThemeToggle />
             <LogoutButton />
           </div>
         </div>
