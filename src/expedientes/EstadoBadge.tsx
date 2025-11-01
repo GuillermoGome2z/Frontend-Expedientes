@@ -12,7 +12,8 @@ export function EstadoBadge({ estado }: EstadoBadgeProps) {
     Rechazado: { variant: "destructive" as const, label: "❌ Rechazado" },
   };
 
-  const config = variants[estado];
+  // Manejar caso cuando estado es undefined o inválido
+  const config = variants[estado] || { variant: "outline" as const, label: "Sin estado" };
 
   return <Badge variant={config.variant}>{config.label}</Badge>;
 }

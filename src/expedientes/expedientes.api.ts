@@ -25,25 +25,30 @@ export const expedientesApi = {
     fetcher.patch<{ data: Expediente }>(`/expedientes/${id}/estado`, data),
 
   exportExcel: async (filters?: ExpedienteFilters) => {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/expedientes/export?${new URLSearchParams(filters as any)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("expedientes_auth") ? JSON.parse(localStorage.getItem("expedientes_auth")!).token : ""}`,
-        },
-      }
-    );
+    // Construir query params solo con valores definidos
+    const params = new URLSearchParams();
+    if (filters?.q) params.append("q", filters.q);
+    if (filters?.estado) params.append("estado", filters.estado);
+    
+    const queryString = params.toString();
+    const url = `${import.meta.env.VITE_API_URL}/expedientes/export${queryString ? `?${queryString}` : ""}`;
+    
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("expedientes_auth") ? JSON.parse(localStorage.getItem("expedientes_auth")!).token : ""}`,
+      },
+    });
     
     if (!response.ok) throw new Error("Error al exportar");
     
     const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
+    const downloadUrl = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
+    a.href = downloadUrl;
     a.download = `expedientes_${new Date().toISOString().split("T")[0]}.xlsx`;
     document.body.appendChild(a);
     a.click();
-    window.URL.revokeObjectURL(url);
+    window.URL.revokeObjectURL(downloadUrl);
     document.body.removeChild(a);
   },
 };
