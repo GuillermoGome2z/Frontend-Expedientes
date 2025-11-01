@@ -45,9 +45,6 @@
 
 Sistema web empresarial diseñado para optimizar la gestión de expedientes criminales e indicios forenses. Implementa arquitectura moderna con separación frontend-backend, autenticación JWT, control de acceso basado en roles (RBAC) y despliegue completo con Docker.
 
-### 🎓 Contexto Académico
-
-Proyecto desarrollado para el curso **Desarrollo de Software Empresarial** en la **Universidad Nacional**, demostrando competencias en:
 
 - 🏗️ **Arquitectura de Software**: Frontend React + Backend Express + SQL Server
 - 🔐 **Seguridad**: JWT, RBAC, validación de entrada, CORS
@@ -818,7 +815,7 @@ git push origin feature/nueva-funcionalidad
 ### Guillermo Gómez
 
 **Estudiante de Ingeniería de Sistemas**  
-Universidad Nacional
+Universidad Mariano Galvez de Guatemala
 
 [![GitHub](https://img.shields.io/badge/GitHub-GuillermoGome2z-181717?style=for-the-badge&logo=github)](https://github.com/GuillermoGome2z)
 [![Email](https://img.shields.io/badge/Email-Contacto-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:tu-email@ejemplo.com)
