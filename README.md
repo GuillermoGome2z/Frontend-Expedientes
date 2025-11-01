@@ -29,11 +29,13 @@
 
 | Dashboard Principal | Gestión de Expedientes |
 |:------------------:|:---------------------:|
-| ![Dashboard](https://via.placeholder.com/400x250/1e293b/ffffff?text=Dashboard+Metricas+en+Tiempo+Real) | ![Expedientes](https://via.placeholder.com/400x250/1e293b/ffffff?text=CRUD+Expedientes+con+Filtros) |
+| ![Dashboard](./public/screenshots/dashboard.png) | ![Expedientes](./public/screenshots/expedientes.png) |
 
 | Detalle de Expediente | Módulo de Usuarios |
 |:--------------------:|:------------------:|
-| ![Detalle](https://via.placeholder.com/400x250/1e293b/ffffff?text=Gestion+de+Indicios) | ![Usuarios](https://via.placeholder.com/400x250/1e293b/ffffff?text=Admin+de+Usuarios) |
+| ![Detalle](./public/screenshots/detalle.png) | ![Usuarios](./public/screenshots/usuarios.png) |
+
+*Sistema en ejecución mostrando las principales funcionalidades*
 
 </div>
 
