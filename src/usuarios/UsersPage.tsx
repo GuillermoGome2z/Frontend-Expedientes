@@ -271,7 +271,7 @@ export function UsersPage() {
             <select
               value={filters.rol || ""}
               onChange={(e) => handleRolFilter(e.target.value)}
-              className="px-3 py-2 border rounded-md"
+              className="px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
             >
               <option value="">Todos los roles</option>
               <option value="tecnico">Técnico</option>
@@ -356,7 +356,7 @@ export function UsersPage() {
                   <select
                     id="rol"
                     {...createForm.register("rol")}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   >
                     <option value="tecnico">Técnico</option>
                     <option value="coordinador">Coordinador</option>

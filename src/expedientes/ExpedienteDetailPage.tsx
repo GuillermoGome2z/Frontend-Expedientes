@@ -86,6 +86,17 @@ export function ExpedienteDetailPage() {
   
   const canEdit = (isCoordinador || isTecnicoAsignado) && isExpedienteAbierto;
   const canChangeStatus = isCoordinador && isExpedienteAbierto;
+  
+  console.log("🔐 Permisos del expediente:", {
+    usuario: user?.username,
+    rol: user?.rol,
+    isCoordinador,
+    isTecnicoAsignado,
+    estadoExpediente: expediente?.estado,
+    isExpedienteAbierto,
+    canEdit,
+    canChangeStatus
+  });
 
   if (error) {
     return (

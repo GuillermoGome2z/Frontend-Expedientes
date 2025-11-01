@@ -88,8 +88,19 @@ export const usuariosApi = {
       throw new Error("La contraseña debe tener al menos 6 caracteres");
     }
 
+    // El backend puede esperar diferentes formatos:
+    // Opción 1: { newPassword: "..." }
+    // Opción 2: { password: "..." }
+    // Opción 3: { contrasena: "..." }
+    const payload = {
+      newPassword: data.newPassword,
+      password: data.newPassword, // Alias por si el backend usa este nombre
+    };
+
     console.log("🔑 Cambiando contraseña del usuario:", id);
-    return fetcher.patch<Usuario>(`/usuarios/${id}/password`, data);
+    console.log("📦 Payload completo:", JSON.stringify(payload, null, 2));
+    console.log("🌐 URL:", `/usuarios/${id}/password`);
+    return fetcher.patch<Usuario>(`/usuarios/${id}/password`, payload);
   },
 
   /**
@@ -97,8 +108,9 @@ export const usuariosApi = {
    * Un usuario desactivado no puede iniciar sesión
    */
   toggleActivo: (id: number, activo: boolean) => {
-    console.log(`🔄 ${activo ? "Activando" : "Desactivando"} usuario:`, id);
-    return fetcher.patch<Usuario>(`/usuarios/${id}/activo`, { activo });
+    const payload = { activo };
+    console.log(`🔄 ${activo ? "Activando" : "Desactivando"} usuario:`, id, "Payload:", payload);
+    return fetcher.patch<Usuario>(`/usuarios/${id}/activo`, payload);
   },
 
   /**
