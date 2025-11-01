@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # Base de datos SQL Server
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: expedientes-sqlserver
+    hostname: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_PID: "Developer"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./sql-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - expedientes-network
+
+  # Backend API (Express + TypeScript)
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: expedientes-api
+    hostname: api
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_SERVER: sqlserver
+      DB_PORT: 1433
+      DB_DATABASE: ExpedientesDB
+      DB_USER: sa
+      DB_PASSWORD: "YourStrong!Passw0rd"
+      JWT_SECRET: "your-super-secret-jwt-key-change-in-production"
+      BASE_PATH: "/api"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./logs:/app/logs
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - expedientes-network
+    restart: unless-stopped
+    command: npm run dev
+
+  # Frontend (Vite + React + TypeScript)
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: expedientes-web
+    hostname: web
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: "http://localhost:3000/api"
+      NODE_ENV: development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    networks:
+      - expedientes-network
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+volumes:
+  sqlserver-data:
+    driver: local
+
+networks:
+  expedientes-network:
+    driver: bridge

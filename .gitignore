@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files (IMPORTANTE: no subir credenciales)
+.env
+.env.local
+.env.*.local
+.env.docker
+!.env.docker.example
+
+# Docker
+docker-compose.override.yml
+logs/
+*.log
